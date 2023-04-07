@@ -1,0 +1,288 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background-image: url('../images/sign_background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+header {
+    min-height: 10%;
+    position: relative;
+    text-align: center;
+}
+
+h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #163512c0;
+}
+
+main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0px 0px 10px 0px #3b3b3b;
+}
+
+h2 {
+    color: #fff;
+    font-weight: 300;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+}
+
+.select {
+    display: flex;
+    align-items: center;
+}
+
+label {
+    color: #fff;
+}
+
+.inputs label {
+    padding-bottom: 5px;
+}
+
+.inputs input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgb(210, 210, 210);
+    color: #fff;
+}
+
+select {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    margin-left: 10px;
+}
+
+select option {
+    background-color: #000;
+    color: #fff;
+}
+
+#sumbit-btn {
+    align-self: center;
+    background-color: rgb(73, 92, 69);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#sumbit-btn:hover {
+    transform: scale(1.1);
+}
+
+#sumbit-btn:active {
+    background-color: rgb(0, 0, 0);
+    transform: scale(1.1);
+}
+
+.go_to_login {
+    text-align: center;
+}
+
+a {
+    color: rgba(210, 210, 210, 0.695);
+}
+
+@media only screen and (min-width: 1024px) {
+    header {
+        height: 17.5%;
+    }
+
+    main {
+        margin-top: 10px;
+        width: 33%;
+    }
+
+    h2 {
+        padding: 45px 0 20px 0;
+    }
+
+    form {
+        padding: 25px 70px;
+    }
+
+    .inputs {
+        margin-bottom: 25px;
+    }
+
+    .inputs input {
+        height: 45px;
+        font-size: 16px;
+        padding: 0 5px;
+    }
+
+    select {
+        height: 35px;
+        font-size: 16px;
+        padding: 0 5px;
+    }
+
+    #sumbit-btn {
+        margin-top: 20px;
+        height: 40px;
+        width: 40%;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .go_to_login {
+        padding: 15px 0;
+    }
+
+    a {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    header {
+        height: 15%;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    main {
+        margin-top: 10px;
+        width: 43%;
+    }
+
+    h2 {
+        font-size: 20px;
+        padding: 28px 0 10px 0;
+    }
+
+    form {
+        padding: 15px 50px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    .inputs {
+        margin-bottom: 20px;
+    }
+
+    .inputs input {
+        height: 35px;
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    select {
+        height: 30px;
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    #sumbit-btn {
+        margin-top: 10px;
+        height: 35px;
+        width: 45%;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .go_to_login {
+        padding: 10px 0;
+    }
+
+    a {
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    header {
+        height: 14%;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    main {
+        margin-top: 5px;
+        width: 70%;
+    }
+
+    h2 {
+        font-size: 18px;
+        padding: 23px 0 8px 0;
+    }
+
+    form {
+        padding: 13px 30px;
+    }
+
+    label {
+        font-size: 13px;
+    }
+
+    .inputs {
+        margin-bottom: 16px;
+    }
+
+    .inputs input {
+        height: 33px;
+        font-size: 13px;
+        padding: 0 5px;
+    }
+
+    select {
+        height: 30px;
+        font-size: 13px;
+        padding: 0 5px;
+    }
+
+    #sumbit-btn {
+        margin-top: 12px;
+        height: 35px;
+        width: 45%;
+        border-radius: 5px;
+        font-size: 13px;
+    }
+
+    .go_to_login {
+        padding: 8px 0;
+    }
+
+    a {
+        font-size: 11px;
+    }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HW 3 | Registration</title>
+    <link rel="stylesheet" href="../styles/registration.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>TRUCKAPP</h1>
+        </header>
+        <main class="registration">
+            <h2>REGISTRATION</h2>
+            <form action="javascript:sendRegisterData()" method="post" name="registerForm">
+                <div class="inputs">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" id="email" placeholder="Enter an email" required>
+                </div>
+                <div class="inputs">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" placeholder="Enter a password" required>
+                </div>
+                <div class="select">
+                    <label for="roles">Role:</label>
+                    <select id="roles" name="roles">
+                        <option value="SHIPPER">Shipper</option>
+                        <option value="DRIVER">Driver</option>
+                    </select>
+                </div>
+                <input id="sumbit-btn" type="submit" name="submit" value="Sign Up">
+                <div class="go_to_login">
+                    <a href="../index.html">Sign In</a>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script defer src="../scripts/registaration.js"></script>
+</body>
+
+</html>

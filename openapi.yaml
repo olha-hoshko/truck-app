@@ -1,0 +1,954 @@
+swagger: "2.0"
+info:
+  description: "Homework description"
+  version: "1.0.0"
+  title: "LAB FE NodeJS HW #3"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "Kyrylo_Yezhov@epam.com"
+host: "localhost:8080"
+basePath: "/"
+tags:
+- name: "User"
+  description: "Everything about your User"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+- name: "Truck"
+  description: "Info about trucks"
+- name: "Load"
+  description: "Info about loads"
+schemes:
+- "http"
+paths:
+  /api/users/me:
+    get:
+      tags:
+      - "User"
+      summary: "Get user's profile info"
+      description: "User can request only his own profile info"
+      operationId: "getProfileInfo"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: '#/definitions/User'
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+    delete:
+      tags:
+      - "User"
+      summary: "Delete user's profile"
+      description: "User can delete only his own profile info"
+      operationId: "deleteProfile"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+            description: "Success"
+            schema:
+                type: "object"
+                properties:
+                  message: 
+                    type: string
+                    example: "Profile deleted successfully"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+  /api/users/me/password:
+    patch:
+      tags:
+      - "User"
+      summary: "Change user's password"
+      description: "Change user's password"
+      operationId: "changeProfilePassword"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "new_password"
+        schema:
+          type: "object"
+          properties:
+            oldPassword:
+              type: string
+            newPassword:
+              type: string
+      responses:
+        "200":
+            description: "Success"
+            schema:
+                type: "object"
+                properties:
+                  message: 
+                    type: string
+                    example: "Password changed successfully"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+  /api/auth/register:
+    post:
+      tags:
+      - "Auth"
+      summary: "Register a new system user(Shipper or Driver)"
+      description: "Create new profile"
+      operationId: "createProfile"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "credentials"
+        schema:
+          $ref: "#/definitions/registrationCredentials"
+      responses:
+        "200":
+            description: "Success"
+            schema:
+                type: "object"
+                properties:
+                  message: 
+                    type: string
+                    example: "Profile created successfully"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+  /api/auth/login:
+    post:
+      tags:
+      - "Auth"
+      summary: "Login"
+      description: "Login into the system, role should be detected automatically"
+      operationId: "login"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "credentials"
+        schema:
+          $ref: "#/definitions/Credentials"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "object"
+            properties:
+              jwt_token: 
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0b3B0YWwuY29tIiwiZXhwIjoxNDI2NDIwODAwLCJodHRwOi8vdG9wdGFsLmNvbS9qd3RfY2xhaW1zL2lzX2FkbWluIjp0cnVlLCJjb21wYW55IjoiVG9wdGFsIiwiYXdlc29tZSI6dHJ1ZX0.yRQYnWzskCZUxPwaQupWkiUzKELZ49eM7oWxAQK_ZXw"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+  /api/auth/forgot_password:
+    post:
+      tags:
+      - "Auth"
+      summary: "Forgot password"
+      description: "(Optional) Forgot password option"
+      operationId: "forgotPassword"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "credentials"
+        schema:
+          properties:
+            email:
+              type: "string"
+              example: "kyrylo@gmail.com"
+      responses:
+        "200":
+            description: "Success"
+            schema:
+                type: "object"
+                properties:
+                  message: 
+                    type: string
+                    example: "New password sent to your email address"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+  /api/trucks:
+    get:
+      tags:
+      - "Truck"
+      summary: "Get user's trucks"
+      description: "Retrieve the list of trucks for authorized user(abailable only for driver role)"
+      operationId: "getUserTrucks"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+              type: "object"
+              properties: 
+                  trucks:
+                      type: array
+                      items:
+                          $ref: "#/definitions/Truck"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+    post:
+        tags:
+        - "Truck"
+        summary: "Add Truck for User"
+        description: "Add Truck for User(abailable only for driver role)"
+        operationId: "addUserTruck"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "Truck payload"
+          schema:
+            properties:
+              type:
+                type: "string"
+                enum: ["SPRINTER", "SMALL STRAIGHT", "LARGE STRAIGHT"]
+                example: "SPRINTER"
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Truck created successfully"
+            "400":
+                description: "Bad request"
+                schema:
+                    $ref: '#/definitions/Error'
+            "500":
+                description: "Internal server error"
+                schema:
+                    $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+  /api/trucks/{id}:
+    get:
+        tags:
+        - "Truck"
+        summary: "Get user's truck by id"
+        description: "Get user's truck by id(abailable only for driver role)"
+        operationId: "getUserTruckById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Truck id"
+          required: true
+          type: string
+        responses:
+            "200":
+              description: "Success"
+              schema:
+                type: object
+                properties:
+                  truck:
+                      $ref: '#/definitions/Truck'
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+    put:
+        tags:
+        - "Truck"
+        summary: "Update user's truck by id"
+        description: "Update user's truck by id (abailable only for driver role)"
+        operationId: "updateUserTruckById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Truck id"
+          required: true
+          type: string
+        - in: "body"
+          name: "Truck payload"
+          schema:
+            properties:
+              type:
+                type: "string"
+                enum: ["SPRINTER", "SMALL STRAIGHT", "LARGE STRAIGHT"]
+                example: "SPRINTER"
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Truck details changed successfully"
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+    delete:
+        tags:
+        - "Truck"
+        summary: "Delete user's truck by id"
+        description: "Delete user's truck by id (abailable only for driver role)"
+        operationId: "deleteUserTruckById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Truck id"
+          required: true
+          type: string
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Truck deleted successfully"
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+  /api/trucks/{id}/assign:
+    post:
+        tags:
+        - "Truck"
+        summary: "Assign truck to user by id"
+        description: "Assign truck to user by id (abailable only for driver role)"
+        operationId: "assignUserTruckById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Truck id"
+          required: true
+          type: string
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Truck assigned successfully"
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+  /api/loads:
+    get:
+      tags:
+      - "Load"
+      summary: "Get user's loads"
+      description: "Retrieve the list of loads for authorized user, returns list of completed and active loads for Driver and list of all available loads for Shipper"
+      operationId: "getUserLoads"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "query"
+          name: "status"
+          description: "Filter by load status"
+          required: false
+          type: string
+        - in: "query"
+          name: "limit"
+          description: "Limit for records per request, pagination parameter(default: 10, max: 50)"
+          required: false
+          type: integer
+        - in: "query"
+          name: "offset"
+          description: "Offset for records, pagination parameter(default: 0)"
+          required: false
+          type: integer
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "object"
+            properties: 
+                loads:
+                    type: array
+                    items:
+                        $ref: "#/definitions/Load"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+    post:
+        tags:
+        - "Load"
+        summary: "Add Load for User"
+        description: "Add Load for User(abailable only for shipper role)"
+        operationId: "addUserLoad"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "Load payload"
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+                example: "Moving sofa"
+              payload:
+                type: "number"
+                example: 100
+              pickup_address:
+                type: "string"
+                example: "Flat 25, 12/F, Acacia Building 150 Kennedy Road"
+              delivery_address:
+                type: "string"
+                example: "Sr. Rodrigo Domínguez Av. Bellavista N° 185"
+              dimensions:
+                type: "object"
+                properties: 
+                  width:
+                    type: "number"
+                    example: 44
+                  length:
+                    type: "number"
+                    example: 32
+                  height:
+                    type: "number"
+                    example: 66
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Load created successfully"
+            "400":
+                description: "Bad request"
+                schema:
+                    $ref: '#/definitions/Error'
+            "500":
+                description: "Internal server error"
+                schema:
+                    $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+  /api/loads/active:
+    get:
+      tags:
+      - "Load"
+      summary: "Get user's active load(if exists)"
+      description: "Retrieve the active load for authorized driver(available only for driver)"
+      operationId: "getUserActiveLoad"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "object"
+            properties: 
+                load:
+                    type: object
+                    $ref: "#/definitions/Load"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+  /api/loads/active/state:
+    patch:
+      tags:
+      - "Load"
+      summary: "Iterate to next Load state"
+      description: "Iterate to next Load state(available only for driver)"
+      operationId: "iterateLoadState"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+            description: "Success"
+            schema:
+                type: "object"
+                properties:
+                  message: 
+                    type: string
+                    example: "Load state changed to 'En route to Delivery'"
+        "400":
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Error'
+        "500":
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - jwt_token: []
+  /api/loads/{id}:
+    get:
+        tags:
+        - "Load"
+        summary: "Get user's Load by id"
+        description: "Get user's Load by id"
+        operationId: "getUserLoadById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Load id"
+          required: true
+          type: string
+        responses:
+            "200":
+              description: "Success"
+              schema:
+                type: object
+                properties:
+                  load:
+                      $ref: '#/definitions/Load'
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+    put:
+        tags:
+        - "Load"
+        summary: "Update user's load by id"
+        description: "Update user's load by id (abailable only for shipper role)"
+        operationId: "updateUserLoadById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Load id"
+          required: true
+          type: string
+        - in: "body"
+          name: "Load payload"
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+                example: "Moving sofa"
+              payload:
+                type: "number"
+                example: 100
+              pickup_address:
+                type: "string"
+                example: "Flat 25, 12/F, Acacia Building 150 Kennedy Road"
+              delivery_address:
+                type: "string"
+                example: "Sr. Rodrigo Domínguez Av. Bellavista N° 185"
+              dimensions:
+                type: "object"
+                properties: 
+                  width:
+                    type: "number"
+                    example: 44
+                  length:
+                    type: "number"
+                    example: 32
+                  height:
+                    type: "number"
+                    example: 66
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Load details changed successfully"
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+    delete:
+        tags:
+        - "Load"
+        summary: "Delete user's load by id"
+        description: "Delete user's load by id (abailable only for shipper role)"
+        operationId: "deleteUserLoadById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Load id"
+          required: true
+          type: string
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Load deleted successfully"
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+  /api/loads/{id}/post:
+    post:
+        tags:
+        - "Load"
+        summary: "Post a user's load by id"
+        description: "Post a user's load by id, search for drivers (abailable only for shipper role)"
+        operationId: "postUserLoadById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Load id"
+          required: true
+          type: string
+        responses:
+            "200":
+                description: "Success"
+                schema:
+                    type: "object"
+                    properties:
+                      message: 
+                        type: string
+                        example: "Load posted successfully"
+                      driver_found: 
+                        type: boolean
+                        example: true
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+  /api/loads/{id}/shipping_info:
+    get:
+        tags:
+        - "Load"
+        summary: "Get user's Load shipping info by id"
+        description: "Get user's Load shipping info by id, returns detailed info about shipment for active loads (available only for shipper)"
+        operationId: "getUserLoadShippingDetailsById"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "path"
+          name: "id"
+          description: "Load id"
+          required: true
+          type: string
+        responses:
+            "200":
+              description: "Success"
+              schema:
+                type: object
+                properties:
+                  load:
+                      $ref: '#/definitions/Load'
+                  truck:
+                      $ref: '#/definitions/Truck'
+            "400":
+              description: "Bad request"
+              schema:
+                  $ref: '#/definitions/Error'
+            "500":
+              description: "Internal server error"
+              schema:
+                  $ref: '#/definitions/Error'
+        security:
+        - jwt_token: []
+securityDefinitions:
+  jwt_token:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  Error:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Error message"
+  Credentials:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "kyrylo@gmail.com"
+      password:
+        type: "string"
+        example: "ve518dl3"
+  registrationCredentials:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "kyrylo@gmail.com"
+      password:
+        type: "string"
+        example: "ve518dl3"
+      role:
+        type: "string"
+        enum: [SHIPPER, DRIVER]
+        example: "SHIPPER"
+  User:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      role:
+        type: "string"
+        example: "DRIVER"
+      email:
+        type: "string"
+        example: "kyrylo@gmail.com"
+      created_date:
+        type: "string"
+        format: "date"
+        example: "2020-10-28T08:03:19.814Z"
+  Truck:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      created_by:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      assigned_to:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      type:
+        type: "string"
+        enum: ["SPRINTER", "SMALL STRAIGHT", "LARGE STRAIGHT"]
+        example: "SPRINTER"
+      status:
+        type: "string"
+        enum: ["OL", "IS"]
+        example: "IS"
+      created_date:
+        type: "string"
+        format: "date"
+        example: "2020-10-28T08:03:19.814Z"
+  Load:
+    type: "object"
+    properties:
+      _id:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      created_by:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      assigned_to:
+        type: "string"
+        example: "5099803df3f4948bd2f98391"
+      status:
+        type: "string"
+        enum: ["NEW", "POSTED", "ASSIGNED", "SHIPPED"]
+        example: "NEW"
+      state:
+        type: "string"
+        enum: ["En route to Pick Up", "Arrived to Pick Up", "En route to delivery", "Arrived to delivery"]
+        example: "En route to Pick Up"
+      name:
+        type: "string"
+        example: "Moving sofa"
+      payload:
+        type: "number"
+        example: 100
+      pickup_address:
+        type: "string"
+        example: "Flat 25, 12/F, Acacia Building 150 Kennedy Road"
+      delivery_address:
+        type: "string"
+        example: "Sr. Rodrigo Domínguez Av. Bellavista N° 185"
+      dimensions:
+        type: "object"
+        properties: 
+          width:
+            type: "number"
+            example: 44
+          length:
+            type: "number"
+            example: 32
+          height:
+            type: "number"
+            example: 66
+      logs:
+        type: "array"
+        items: 
+          type: "object"
+          properties:
+            message:
+              type: "string"
+              example: "Load assigned to driver with id ###"
+            time:
+              type: "string"
+              format: "date"
+              example: "2020-10-28T08:03:19.814Z"
+      created_date:
+        type: "string"
+        format: "date"
+        example: "2020-10-28T08:03:19.814Z"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
